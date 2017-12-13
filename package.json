@@ -1,0 +1,23 @@
+{
+  "name": "keksobooking",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Личный проект «Кексобукинг» от HTML Academy",
+  "author": "Анастасия Куванова",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:NastyaKuvi/keksobooking.git"
+  },
+  "homepage": "https://github.com/NastyaKuvi/keksobooking",
+  "devDependencies": {
+    "eslint": "3.9.0"
+  },
+  "license": "MIT",
+  "dependencies": {},
+  "scripts": {
+    "test": "eslint js/"
+  },
+  "engines": {
+    "node": "^6.10"
+  }
+}
