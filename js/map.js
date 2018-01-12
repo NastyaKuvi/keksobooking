@@ -2,20 +2,26 @@
 
 var PIN_WIDTH = 56;
 var PIN_HEIGHT = 75;
-var FEATURES = ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditioner'];
 var TIMES_CHEKC_IN_OUT = ['12:00', '13:00', '14:00'];
 var TYPES = [{type: 'flat', name: 'Квартира'},
              {type: 'house', name: 'Дом'},
              {type: 'bungalo', name: 'Бунгало'}];
-var TITLE_VALUES = ['Большая уютная квартира', 'Маленькая неуютная квартира', 'Огромный прекрасный дворец', 'Маленький ужасный дворец', 'Красивый гостевой домик', 'Некрасивый негостеприимный домик', 'Уютное бунгало далеко от моря', 'Неуютное бунгало по колено в воде'];
-var CopyOfTitles = TITLE_VALUES.slice();
+
+var features = ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditioner'];
+var titles = ['Большая уютная квартира', 'Маленькая неуютная квартира', 'Огромный прекрасный дворец', 'Маленький ужасный дворец', 'Красивый гостевой домик', 'Некрасивый негостеприимный домик', 'Уютное бунгало далеко от моря', 'Неуютное бунгало по колено в воде'];
 
 var tokioMap = document.querySelector('.tokyo__pin-map');
 var lodgetemplate = document.querySelector('#lodge-template').content;
 var offerDialog = document.querySelector('#offer-dialog');
 var dialogPanel = offerDialog.querySelector('.dialog__panel');
 
-var getCorrectStringNumber = function (number) {
+var replaceArrayItems = function (array, index1, index2) {
+  var item = array[index1];
+  array[index1] = array[index2];
+  array[index2] = item;
+};
+
+var formatUserNumber = function (number) {
   return number > 9 ? number : '0' + number;
 };
 
@@ -23,27 +29,33 @@ var getRandomNumder = function (min, max) {
   return Math.floor(min + Math.random() * (max + 1 - min));
 };
 
-var getUnicTitle = function () {
-  var index = getRandomNumder(0, CopyOfTitles.length - 1);
-  return CopyOfTitles.splice(index, 1)[0];
+var getRandomUnicItem = function (array, index) {
+  var rand = getRandomNumder(index, array.length - 1);
+  replaceArrayItems(array, rand, index);
+  return array[index];
+};
+
+var getUnicTitle = function (index) {
+  return getRandomUnicItem(titles, index);
+};
+
+var getRandomItem = function (array) {
+  var index = getRandomNumder(0, array.length - 1);
+  return array[index];
 };
 
 var getType = function () {
-  var index = getRandomNumder(0, TYPES.length - 1);
-  return TYPES[index].type;
+  return getRandomItem(TYPES).name;
 };
 
 var getTime = function () {
-  var index = getRandomNumder(0, TIMES_CHEKC_IN_OUT.length - 1);
-  return TIMES_CHEKC_IN_OUT[index];
+  return getRandomItem(TIMES_CHEKC_IN_OUT);
 };
 
 var getUnicFeatures = function (length) {
   var resultFeatures = [];
-  var CopyOfFeatures = FEATURES.slice();
   for (var i = 0; i < length; i++) {
-    var feature = CopyOfFeatures.splice(getRandomNumder(0, CopyOfFeatures.length - 1), 1)[0];
-    resultFeatures.push(feature);
+    resultFeatures.push(getRandomUnicItem(features, i));
   }
   return resultFeatures;
 };
@@ -53,10 +65,10 @@ var createData = function (count) {
   for (var i = 0; i < count; i++) {
     var object = {
       author: {
-        avatar: 'img/avatars/user' + getCorrectStringNumber(i + 1) + '.png'
+        avatar: 'img/avatars/user' + formatUserNumber(i + 1) + '.png'
       },
       offer: {
-        title: getUnicTitle(),
+        title: getUnicTitle(i),
         address: function () {
           return object.location.x + ', ' + object.location.y;
         },
@@ -66,7 +78,7 @@ var createData = function (count) {
         guests: getRandomNumder(1, 10),
         checkin: getTime(),
         checkout: getTime(),
-        features: getUnicFeatures(getRandomNumder(0, FEATURES.length)),
+        features: getUnicFeatures(getRandomNumder(0, features.length)),
         description: '',
         photos: []
       },
@@ -81,7 +93,7 @@ var createData = function (count) {
   return resultdata;
 };
 
-var createPin = function (data) {
+var renderPin = function (data) {
   var resElement = document.createElement('div');
   resElement.classList.add('pin');
   resElement.style.left = (data.location.x - PIN_WIDTH / 2) + 'px';
@@ -92,27 +104,14 @@ var createPin = function (data) {
   return resElement;
 };
 
-var getTypeName = function (type) {
-  switch (type) {
-    case TYPES[0].type:
-      return TYPES[0].name;
-    case TYPES[1].type:
-      return TYPES[1].name;
-    case TYPES[2].type:
-      return TYPES[2].name;
-    default:
-      return '';
-  }
-};
-
-var createLodgeElement = function (offer) {
+var renderLodgeElement = function (offer) {
   var lodgeElement = lodgetemplate.cloneNode(true);
   lodgeElement.querySelector('.lodge__title').textContent = offer.title;
   lodgeElement.querySelector('.lodge__address').textContent = offer.address();
   lodgeElement.querySelector('.lodge__price').innerHTML = offer.price + ' &#x20bd;/ночь';
-  lodgeElement.querySelector('.lodge__type').textContent = getTypeName(offer.type);
+  lodgeElement.querySelector('.lodge__type').textContent = offer.type;
   lodgeElement.querySelector('.lodge__rooms-and-guests').textContent = 'Для ' + offer.guests + ' гостей в ' + offer.rooms + ' комнатах';
-  lodgeElement.querySelector('.lodge__checkin-time').textContent = 'Заезд после' + offer.checkin + ', выезд до ' + offer.checkout;
+  lodgeElement.querySelector('.lodge__checkin-time').textContent = 'Заезд после ' + offer.checkin + ', выезд до ' + offer.checkout;
   for (var i = 0; i < offer.features.length; i++) {
     var span = '<span class="feature__image feature__image--' + offer.features[i] + '">';
     lodgeElement.querySelector('.lodge__features').insertAdjacentHTML('afterbegin', span);
@@ -121,16 +120,16 @@ var createLodgeElement = function (offer) {
   return lodgeElement;
 };
 
-var createNewOffer = function (data) {
+var renderNewOffer = function (data) {
   offerDialog.querySelector('.dialog__title').querySelector('img').setAttribute('src', data.author.avatar);
-  offerDialog.replaceChild(createLodgeElement(data.offer), dialogPanel);
+  offerDialog.replaceChild(renderLodgeElement(data.offer), dialogPanel);
 };
 
 var data = createData(8);
 var fragment = document.createDocumentFragment();
 for (var i = 0; i < data.length; i++) {
-  fragment.appendChild(createPin(data[i]));
+  fragment.appendChild(renderPin(data[i]));
 }
 tokioMap.appendChild(fragment);
-createNewOffer(data[0]);
+renderNewOffer(data[0]);
 
