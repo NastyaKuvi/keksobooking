@@ -35,21 +35,9 @@ var getRandomUnicItem = function (array, index) {
   return array[index];
 };
 
-var getUnicTitle = function (index) {
-  return getRandomUnicItem(titles, index);
-};
-
 var getRandomItem = function (array) {
   var index = getRandomNumder(0, array.length - 1);
   return array[index];
-};
-
-var getType = function () {
-  return getRandomItem(TYPES).name;
-};
-
-var getTime = function () {
-  return getRandomItem(TIMES_CHEKC_IN_OUT);
 };
 
 var getUnicFeatures = function (length) {
@@ -68,16 +56,16 @@ var createData = function (count) {
         avatar: 'img/avatars/user' + formatUserNumber(i + 1) + '.png'
       },
       offer: {
-        title: getUnicTitle(i),
+        title: getRandomUnicItem(titles, i),
         address: function () {
           return object.location.x + ', ' + object.location.y;
         },
         price: getRandomNumder(1000, 1000000),
-        type: getType(),
+        type: getRandomItem(TYPES).name,
         rooms: getRandomNumder(1, 5),
         guests: getRandomNumder(1, 10),
-        checkin: getTime(),
-        checkout: getTime(),
+        checkin: getRandomItem(TIMES_CHEKC_IN_OUT),
+        checkout: getRandomItem(TIMES_CHEKC_IN_OUT),
         features: getUnicFeatures(getRandomNumder(0, features.length)),
         description: '',
         photos: []
@@ -125,11 +113,14 @@ var renderNewOffer = function (data) {
   offerDialog.replaceChild(renderLodgeElement(data.offer), dialogPanel);
 };
 
-var data = createData(8);
+var data = createData(8).sort(function (a,b) {
+  return a.location.y - b.location.y;
+});
 var fragment = document.createDocumentFragment();
-for (var i = 0; i < data.length; i++) {
-  fragment.appendChild(renderPin(data[i]));
-}
+
+data.forEach(function (elem) {
+  fragment.appendChild(renderPin(elem));
+});
+
 tokioMap.appendChild(fragment);
 renderNewOffer(data[0]);
-
