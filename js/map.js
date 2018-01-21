@@ -2,6 +2,8 @@
 
 var PIN_WIDTH = 56;
 var PIN_HEIGHT = 75;
+var ENTER_KEY_CODE = 13;
+var ESC_KEY_CODE = 27;
 var TIMES_CHEKC_IN_OUT = ['12:00', '13:00', '14:00'];
 var TYPES = [{type: 'flat', name: 'Квартира'},
              {type: 'house', name: 'Дом'},
@@ -13,7 +15,7 @@ var titles = ['Большая уютная квартира', 'Маленька�
 var tokioMap = document.querySelector('.tokyo__pin-map');
 var lodgetemplate = document.querySelector('#lodge-template').content;
 var offerDialog = document.querySelector('#offer-dialog');
-var dialogPanel = offerDialog.querySelector('.dialog__panel');
+var activePin = null;
 
 var replaceArrayItems = function (array, index1, index2) {
   var item = array[index1];
@@ -81,14 +83,37 @@ var createData = function (count) {
   return resultdata;
 };
 
-var renderPin = function (data) {
+var setActivePin = function (curNode, curData) {
+  if (activePin !== curNode) {
+    if (activePin !== null) {
+      activePin.classList.remove('pin--active');
+    }
+    activePin = curNode;
+    if (curNode !== null) {
+      curNode.classList.add('pin--active');
+      renderNewOfferDialog(curData);
+    }
+  }
+};
+
+var renderPin = function (dataElem) {
   var resElement = document.createElement('div');
   resElement.classList.add('pin');
-  resElement.style.left = (data.location.x - PIN_WIDTH / 2) + 'px';
-  resElement.style.top = (data.location.y - PIN_HEIGHT) + 'px';
-  var htmlString = '<img src="' + data.author.avatar + '" class="rounded" width="40" height="40">';
+  resElement.tabIndex = 0;
+  resElement.style.left = (dataElem.location.x - PIN_WIDTH / 2) + 'px';
+  resElement.style.top = (dataElem.location.y - PIN_HEIGHT) + 'px';
+  var htmlString = '<img src="' + dataElem.author.avatar + '" class="rounded" width="40" height="40">';
   resElement.insertAdjacentHTML('afterbegin', htmlString);
 
+  resElement.addEventListener('click', function (evt) {
+    setActivePin(evt.currentTarget, dataElem);
+  });
+
+  resElement.addEventListener('keydown', function (evt) {
+    if (evt.keyCode === ENTER_KEY_CODE) {
+      setActivePin(evt.currentTarget, dataElem);
+    }
+  });
   return resElement;
 };
 
@@ -108,14 +133,31 @@ var renderLodgeElement = function (offer) {
   return lodgeElement;
 };
 
-var renderNewOffer = function (data) {
-  offerDialog.querySelector('.dialog__title').querySelector('img').setAttribute('src', data.author.avatar);
-  offerDialog.replaceChild(renderLodgeElement(data.offer), dialogPanel);
+var hideCurrentOfferDialog = function () {
+  offerDialog.classList.add('hidden');
+  setActivePin(null);
 };
 
-var data = createData(8).sort(function (a,b) {
+var escKeyDownHandler = function (evt) {
+  if (evt.keyCode === ESC_KEY_CODE) {
+    hideCurrentOfferDialog();
+    document.removeEventListener('keydown', escKeyDownHandler);
+  }
+};
+
+var renderNewOfferDialog = function (data) {
+  offerDialog.querySelector('.dialog__title').querySelector('img').setAttribute('src', data.author.avatar);
+  offerDialog.replaceChild(renderLodgeElement(data.offer), offerDialog.querySelector('.dialog__panel'));
+  if (offerDialog.classList.contains('hidden')) {
+    offerDialog.classList.remove('hidden');
+    document.addEventListener('keydown', escKeyDownHandler);
+  }
+};
+
+var data = createData(8).sort(function (a, b) {
   return a.location.y - b.location.y;
 });
+
 var fragment = document.createDocumentFragment();
 
 data.forEach(function (elem) {
@@ -123,4 +165,8 @@ data.forEach(function (elem) {
 });
 
 tokioMap.appendChild(fragment);
-renderNewOffer(data[0]);
+hideCurrentOfferDialog();
+
+offerDialog.querySelector('.dialog__close').addEventListener('click', function () {
+  hideCurrentOfferDialog();
+});
