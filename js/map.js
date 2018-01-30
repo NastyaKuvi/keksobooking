@@ -2,17 +2,17 @@
 
 var HIDDEN = 'hidden';
 
-var KEY_MAP = {
-  ESC_KEY_CODE: 27,
-  ENTER_KEY_CODE: 13
+var KeyMap = {
+  ESC_CODE: 27,
+  ENTER_CODE: 13
 };
 
-var PIN_SIZE = {
-  PIN_WIDTH: 56,
-  PIN_HEIGHT: 75
+var PinSize = {
+  WIDTH: 56,
+  HEIGHT: 75
 };
 
-var DATA_MAP = {
+var DataMap = {
   DATA_LENGTH: 8,
   TIMES_CHEKC_IN_OUT: ['12:00', '13:00', '14:00'],
   OFFER_TYPES: ['flat', 'house', 'bungalo'],
@@ -61,12 +61,12 @@ var shuffleArray = function (array) {
 };
 
 var getUnicFeatures = function () {
-  var length = getRandomNumder(0, DATA_MAP.FEATURES.length);
-  return shuffleArray(DATA_MAP.FEATURES).slice(0, length);
+  var length = getRandomNumder(0, DataMap.FEATURES.length);
+  return shuffleArray(DataMap.FEATURES).slice(0, length);
 };
 
 var createData = function (count) {
-  shuffledTitles = shuffleArray(DATA_MAP.TITLES);
+  shuffledTitles = shuffleArray(DataMap.TITLES);
 
   var resultdata = [];
   for (var i = 0; i < count; i++) {
@@ -80,11 +80,11 @@ var createData = function (count) {
           return object.location.x + ', ' + object.location.y;
         },
         price: getRandomNumder(1000, 1000000),
-        type: TYPES_MAP[getRandomItem(DATA_MAP.OFFER_TYPES)],
+        type: TYPES_MAP[getRandomItem(DataMap.OFFER_TYPES)],
         rooms: getRandomNumder(1, 5),
         guests: getRandomNumder(1, 10),
-        checkin: getRandomItem(DATA_MAP.TIMES_CHEKC_IN_OUT),
-        checkout: getRandomItem(DATA_MAP.TIMES_CHEKC_IN_OUT),
+        checkin: getRandomItem(DataMap.TIMES_CHEKC_IN_OUT),
+        checkout: getRandomItem(DataMap.TIMES_CHEKC_IN_OUT),
         features: getUnicFeatures(),
         description: '',
         photos: []
@@ -124,7 +124,7 @@ var hideCurrentOfferDialog = function () {
 };
 
 var escKeyDownHandler = function (evt) {
-  if (evt.keyCode === KEY_MAP.ESC_KEY_CODE) {
+  if (evt.keyCode === KeyMap.ESC_CODE) {
     hideCurrentOfferDialog();
     document.removeEventListener('keydown', escKeyDownHandler);
   }
@@ -134,8 +134,8 @@ var renderPin = function (dataElem) {
   var resElement = document.createElement('div');
   resElement.classList.add('pin');
   resElement.tabIndex = 0;
-  resElement.style.left = (dataElem.location.x - PIN_SIZE.PIN_WIDTH / 2) + 'px';
-  resElement.style.top = (dataElem.location.y - PIN_SIZE.PIN_HEIGHT) + 'px';
+  resElement.style.left = (dataElem.location.x - PinSize.WIDTH / 2) + 'px';
+  resElement.style.top = (dataElem.location.y - PinSize.HEIGHT) + 'px';
   var imgElement = '<img src="' + dataElem.author.avatar + '" class="rounded" width="40" height="40">';
   resElement.insertAdjacentHTML('afterbegin', imgElement);
 
@@ -145,7 +145,7 @@ var renderPin = function (dataElem) {
   });
 
   resElement.addEventListener('keydown', function (evt) {
-    if (evt.keyCode === KEY_MAP.ENTER_KEY_CODE) {
+    if (evt.keyCode === KeyMap.ENTER_CODE) {
       changeActivePin(evt.currentTarget);
       renderNewOfferDialog(dataElem);
     }
@@ -182,7 +182,7 @@ offerDialogClose.addEventListener('click', function () {
   hideCurrentOfferDialog();
 });
 
-var data = createData(DATA_MAP.DATA_LENGTH).sort(function (a, b) {
+var data = createData(DataMap.DATA_LENGTH).sort(function (a, b) {
   return a.location.y - b.location.y;
 });
 
