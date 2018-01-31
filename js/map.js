@@ -29,7 +29,6 @@ var offerDialogTitle = offerDialog.querySelector('.dialog__title');
 var offerDialogImg = offerDialogTitle.querySelector('img');
 var offerDialogClose = offerDialogTitle.querySelector('.dialog__close');
 var activePin = null;
-var shuffledTitles = [];
 
 var replaceArrayItems = function (array, index1, index2) {
   var item = array[index1];
@@ -66,9 +65,9 @@ var getUnicFeatures = function () {
 };
 
 var createData = function (count) {
-  shuffledTitles = shuffleArray(DataMap.TITLES);
-
+  var shuffledTitles = shuffleArray(DataMap.TITLES);
   var resultdata = [];
+
   for (var i = 0; i < count; i++) {
     var object = {
       author: {
