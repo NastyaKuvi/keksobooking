@@ -6,11 +6,8 @@ var TypeToPriceMap = {
   palace: 10000
 };
 
-var RoomToGuestsMap = {
-  room_1: 'no_guests',
-  rooms_2: 'guests_3',
-  rooms_100: 'guests_3'
-};
+var RoomsMap = ['room_1', 'rooms_2', 'rooms_100'];
+var GuestsMap = ['no_guests', 'guests_3', 'guests_3'];
 
 var form = document.forms.notice__form;
 var checkInOptions = form.elements.timein;
@@ -36,12 +33,12 @@ houseType.addEventListener('change', function () {
 });
 
 roomNumber.addEventListener('change', function () {
-  capacity.value = RoomToGuestsMap[roomNumber.value];
+  capacity.value = GuestsMap[roomNumber.selectedIndex];
 });
 
 capacity.addEventListener('change', function () {
-  var index = Object.values(RoomToGuestsMap).indexOf(capacity.value);
-  roomNumber.value = Object.keys(RoomToGuestsMap)[index];
+  var index = GuestsMap.indexOf(capacity.value);
+  roomNumber.value = RoomsMap[index];
 });
 
 submitBtn.addEventListener('click', function (evt) {
