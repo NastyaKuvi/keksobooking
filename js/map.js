@@ -50,7 +50,7 @@ var getRandomItem = function (array) {
 };
 
 var shuffleArray = function (array) {
-  var resArray = array.slice(0, array.length);
+  var resArray = array.slice(0);
   for (var i = 0; i < resArray.length; i++) {
     var rand = getRandomNumder(i, resArray.length - 1);
     replaceArrayItems(resArray, rand, i);
@@ -61,7 +61,7 @@ var shuffleArray = function (array) {
 
 var getUnicFeatures = function () {
   var length = getRandomNumder(0, DataMap.FEATURES.length);
-  return shuffleArray(DataMap.FEATURES).slice(0, length);
+  return shuffleArray(DataMap.FEATURES).slice(0, length + 1);
 };
 
 var createData = function (count) {
