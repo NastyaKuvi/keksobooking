@@ -1,7 +1,6 @@
 'use strict';
-window.data = (function() {
+window.data = (function () {
   var DataMap = {
-    DATA_LENGTH: 8,
     TIMES_CHEKC_IN_OUT: ['12:00', '13:00', '14:00'],
     OFFER_TYPES: ['flat', 'house', 'bungalo'],
     FEATURES: ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditioner'],
@@ -58,7 +57,11 @@ window.data = (function() {
     return resultdata;
   };
 
-  return createData(DataMap.DATA_LENGTH).sort(function (a, b) {
-    return a.location.y - b.location.y;
-  });
+  return {
+    create: function (dataCount) {
+      return createData(dataCount).sort(function (a, b) {
+        return a.location.y - b.location.y;
+      });
+    }
+  };
 })();

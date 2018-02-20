@@ -1,5 +1,5 @@
 'use strict';
-window.offerDialog = (function() {
+window.offerDialog = (function () {
   var HIDDEN = 'hidden';
 
   var lodgetemplate = document.querySelector('#lodge-template').content;
@@ -12,7 +12,7 @@ window.offerDialog = (function() {
   var hide = function () {
     offerDialog.classList.add(HIDDEN);
 
-    if(typeof callback === 'function') {
+    if (typeof callback === 'function') {
       callback();
     }
   };
@@ -51,8 +51,8 @@ window.offerDialog = (function() {
     return lodgeElement;
   };
 
-  return function (data, callBack) {
-    callback = callBack;
+  return function (data, cb) {
+    callback = cb;
     offerDialogImg.setAttribute('src', data.author.avatar);
     offerDialog.replaceChild(renderLodgeElement(data.offer), offerDialog.querySelector('.dialog__panel'));
     show();

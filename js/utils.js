@@ -1,5 +1,5 @@
 'use strict';
-window.utils = (function() {
+window.utils = (function () {
 
   var KeyMap = {
     ESC_CODE: 27,
@@ -45,5 +45,5 @@ window.utils = (function() {
     getRandomItem: getRandomItem,
     shuffleArray: shuffleArray,
     replaceArrayItems: replaceArrayItems
-  }
+  };
 })();

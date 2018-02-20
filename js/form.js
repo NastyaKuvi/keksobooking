@@ -1,6 +1,6 @@
 'use strict';
 
-window.form = ( function () {
+window.form = (function () {
   var ROOMS = ['room_1', 'rooms_2', 'rooms_100'];
   var GUESTS = ['no_guests', 'guests_3', 'guests_3'];
 

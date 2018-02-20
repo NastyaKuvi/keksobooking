@@ -1,5 +1,5 @@
 'use strict';
-var pin = (function() {
+window.pin = (function () {
   var ACTIVE = 'pin--active';
 
   var PinSize = {
@@ -27,10 +27,10 @@ var pin = (function() {
     setActivePin(curActivePin);
   };
 
-  var pinActivationHandler = function (pin, data) {
-    changeActivePin(pin);
+  var pinActivationHandler = function (newPin, data) {
+    changeActivePin(newPin);
     window.offerDialog(data, unsetActivePin);
-  }
+  };
 
   return {
     renderPin: function (dataElem) {
@@ -53,5 +53,5 @@ var pin = (function() {
       });
       return resElement;
     }
-  }
+  };
 })();
